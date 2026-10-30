@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Loan Agent Field Activity Dashboard</title>
+<style>
+:root{--bg:#f3f6f9;--surface:#fff;--ink:#14212e;--mute:#5d6b7a;--line:#dde4eb;--brand:#0f5c6e;--brand2:#e0a526;--good:#1d7a4d;--bad:#b3392f;--soft:#e6f0f3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0e1620;--surface:#16212d;--ink:#e8eef4;--mute:#93a3b3;--line:#263544;--brand:#4fb3c9;--brand2:#f0b94a;--good:#4fc88b;--bad:#f08277;--soft:#1b2d3a}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0e1620;--surface:#16212d;--ink:#e8eef4;--mute:#93a3b3;--line:#263544;--brand:#4fb3c9;--brand2:#f0b94a;--good:#4fc88b;--bad:#f08277;--soft:#1b2d3a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",system-ui,-apple-system,Roboto,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:18px}
+h1{font-size:1.5rem;margin:0;letter-spacing:-.01em}
+.sub{color:var(--mute);font-size:.9rem;margin:2px 0 0}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap}
+select,button{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+select:focus-visible,button:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) button.on{color:#06222b}}
+.agent{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.av{width:52px;height:52px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;font-size:1.1rem;flex:none}
+.agent b{font-size:1.1rem}.agent span{color:var(--mute);font-size:.88rem;display:block}
+.rank{margin-left:auto;text-align:right}.rank strong{font-size:1.6rem;color:var(--brand2)}
+.ch{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:14px}.ch .card h2{display:flex;justify-content:space-between}.big{font-size:2rem;font-weight:700;line-height:1.1}.cv{font-size:.9rem;color:var(--mute)}.cv b{color:var(--good);font-size:1.1rem}.mini{display:flex;gap:6px;margin:10px 0 4px}.mini div{flex:1;background:var(--soft);border-radius:8px;padding:6px 8px;font-size:.78rem;color:var(--mute)}.mini b{display:block;font-size:1.05rem;color:var(--ink)}.Dealer{color:var(--brand)}.Individual{color:var(--brand2)}.Freelancer{color:var(--good)}.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.k{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.k .l{color:var(--mute);font-size:.82rem}.k .v{font-size:1.65rem;font-weight:700;margin:2px 0}
+.d{font-size:.82rem;font-weight:600}.up{color:var(--good)}.dn{color:var(--bad)}
+.grid{display:grid;grid-template-columns:3fr 2fr;gap:14px;margin-bottom:14px}
+@media(max-width:800px){.grid{grid-template-columns:1fr}.rank{display:none}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card h2{font-size:1rem;margin:0 0 12px}
+svg{width:100%;height:auto;display:block}
+.fn{display:grid;gap:8px}
+.fr{display:grid;grid-template-columns:96px 1fr 44px;align-items:center;gap:8px;font-size:.88rem}
+.bar{background:var(--soft);border-radius:6px;height:22px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--brand);border-radius:6px;transition:width .5s}
+.prog{margin-bottom:12px;font-size:.88rem}.prog .t{display:flex;justify-content:space-between;margin-bottom:4px}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.88rem;min-width:560px}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:600}
+.tag{padding:2px 9px;border-radius:99px;font-size:.78rem;font-weight:600;background:var(--soft)}
+.Approved,.Disbursed{color:var(--good)}.Rejected{color:var(--bad)}.Pending,.Review{color:var(--brand2)}
+.lg{display:flex;gap:14px;font-size:.82rem;color:var(--mute);margin-top:6px}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 12px}input:focus-visible{outline:2px solid var(--brand);outline-offset:2px}.out{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 16px;min-height:90px;font-size:.93rem}.out h4{margin:12px 0 4px;font-size:.98rem;color:var(--brand)}.out p{margin:6px 0}.out ul{margin:4px 0 8px;padding-left:20px}.out li{margin:3px 0}.mt{--bg:#0b1a24;--surface:#12293a;--ink:#eaf3f6;--mute:#9db4c0;--line:#25465a;--brand:#4fb3c9;--brand2:#f0b94a;--good:#4fc88b;--bad:#f08277;--soft:#1b3a4d;color-scheme:dark;position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:radial-gradient(1200px 600px at 80% -10%,#17465a 0%,transparent 60%),#0b1a24;color:var(--ink);padding:max(12px,env(safe-area-inset-top,0px)) 20px max(12px,env(safe-area-inset-bottom,0px))}
+.mtop{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.mper{display:flex;gap:6px;margin-left:auto}.mtm{font-variant-numeric:tabular-nums;color:var(--mute)}
+.mt button.on{background:var(--brand);color:#06222b;border-color:var(--brand)}
+.mst{flex:1;overflow:auto;padding:24px 4px;max-width:1000px;width:100%;margin:0 auto;display:flex;flex-direction:column;justify-content:center}
+.mk{color:var(--mute);font-size:1.1rem;margin:0}.mbig{font-size:clamp(4rem,16vw,10rem);font-weight:800;line-height:1;color:var(--brand2);letter-spacing:-.03em}.mbig2{font-size:clamp(2.2rem,7vw,4rem);font-weight:800;color:var(--brand2);line-height:1.1}.ms{font-size:clamp(1.1rem,2.6vw,1.6rem);margin:.3em 0 1em}.mh{font-size:clamp(1.6rem,4.5vw,2.8rem);margin:0 0 .6em}
+.mchips{display:flex;gap:12px;flex-wrap:wrap}.mchips div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 18px;color:var(--mute)}.mchips b{display:block;font-size:1.6rem;color:var(--ink)}
+.mrow{display:grid;grid-template-columns:36px minmax(90px,200px) 1fr 70px 80px;gap:12px;align-items:center;margin:10px 0;font-size:clamp(1rem,2.4vw,1.4rem)}.mr{color:var(--mute)}.mv{font-weight:800;text-align:right}.mn{color:var(--mute);font-size:.85em}.mrow .bar{height:26px}
+.mcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.mcard,.mcall{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}.mcard b{font-size:1.3rem}
+.mgrid{display:grid;grid-template-columns:3fr 2fr;gap:20px;align-items:start}@media(max-width:800px){.mgrid{grid-template-columns:1fr}.mrow{grid-template-columns:28px 1fr 60px}.mrow .bar,.mrow .mn{display:none}}
+.mst .prog{font-size:clamp(.95rem,2vw,1.2rem)}.mst .out{font-size:clamp(.95rem,2vw,1.15rem)}
+.mnav{display:flex;align-items:center;justify-content:center;gap:14px}.mdots{display:flex;gap:8px}.mt button.md{width:12px;height:12px;padding:0;border-radius:50%}.mt button.md.on{background:var(--brand2);border-color:var(--brand2)}
+.mact{display:flex;gap:8px;margin-bottom:14px}.mact input{flex:1;font-size:1.1rem}.mac{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:1.15rem}.mac span{flex:1}.mac input{width:22px;height:22px}
+.g2{grid-template-columns:1fr 1fr}@media(max-width:800px){.g2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+ <div><h1>Agent Field Activity</h1><p class="sub">Dealers, individuals and freelancers met, and how many turned into loans</p></div>
+ <div class="ctrl">
+  <select id="agent" aria-label="Select agent"></select>
+  <button data-p="1" class="on">This month</button><button data-p="3">3 months</button><button data-p="6">6 months</button><button id="mtb" style="background:var(--brand2);color:#14212e;border-color:var(--brand2);font-weight:700">Meeting mode</button>
+ </div>
+</header>
+<div class="card" id="up" style="margin-bottom:14px"><h2><span>Monthly data upload</span><span class="sub" id="ustat"></span></h2>
+ <div class="ctrl" style="align-items:center"><input type="file" id="ufile" accept=".csv,text/csv" aria-label="Upload monthly CSV file"><button id="utpl">Download monthly template</button><button id="urtpl" hidden>Download rejection template</button><button id="uclr">Reset to sample data</button></div>
+ <p class="sub" id="umsg" aria-live="polite" style="margin:8px 0 0">Use one file per month. Download the template, fill one row per agent (meetings, leads, conversions, targets, loan amount in lakh and rejection reasons together) and upload it. Uploading a month again replaces it. To track another rejection reason, add a column starting with rej_. The AI reviews the team automatically after each upload.</p>
+ <div class="ctrl" id="uchips" style="margin-top:8px"></div></div>
+<div class="agent"><div class="av" id="av"></div><div><b id="an"></b><span id="ar"></span></div>
+ <div class="rank"><span id="rl">Team rank (conversion)</span><strong id="rk"></strong></div></div>
+<div class="kpis" id="kpis"></div>
+<div class="ch" id="ch"></div>
+<div class="grid g2">
+ <div class="card"><h2 style="display:flex;justify-content:space-between"><span>Targets vs achieved</span><span class="sub" id="tsub"></span></h2><div id="tg"></div></div>
+ <div class="card"><h2>Alerts</h2><div id="al"></div></div>
+</div>
+<div class="grid g2">
+ <div class="card"><h2 style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>Rejection reasons</span><button id="rjai">AI: find fixes</button></h2><div class="fn" id="rj"></div></div>
+ <div class="card" id="dl"><h2>Dealer-wise performance</h2><div class="tw"><table style="min-width:0"><thead><tr><th>Dealer</th><th>Met</th><th>Loans</th><th>Conv.</th></tr></thead><tbody id="dlr"></tbody></table></div></div>
+</div>
+<div class="card" id="coach" style="margin-bottom:14px"><h2><span>AI performance coach</span><span class="sub" id="cfor"></span></h2>
+ <div class="ctrl" style="margin-bottom:10px"><button data-a="analyse">Analyse performance</button><button data-a="improve">How to improve</button><button data-a="plan">Weekly activity plan</button><button data-a="reject">Rejection fixes</button></div>
+ <div style="display:flex;gap:8px;margin-bottom:10px"><input id="cq" style="flex:1;min-width:0" placeholder="Ask the coach, e.g. why are freelancer conversions low?" aria-label="Ask the coach"><button id="cask">Ask</button></div>
+ <div class="out" id="cout" aria-live="polite">Choose an analysis above or ask your own question. The coach reads the numbers on this page for the selected agent or team and period.</div></div>
+<div class="grid">
+ <div class="card"><h2>Meetings per month</h2><div id="chart"></div>
+  <div class="lg"><span><i style="background:var(--brand)"></i>Dealers</span><span><i style="background:var(--brand2)"></i>Individuals</span><span><i style="background:var(--good)"></i>Freelancers</span></div></div>
+ <div class="card"><h2>Conversion by type</h2><div class="fn" id="funnel"></div>
+  <p class="sub" style="margin-top:12px">Conversion = loans disbursed &divide; people met.</p></div>
+</div>
+<div class="card" style="margin-bottom:14px"><h2 style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>Agent leaderboard</span><button id="rexp">Download report (CSV)</button></h2><p class="sub" style="margin:-6px 0 8px">Click an agent to open their dashboard, or Team total to go back to the whole team.</p><div class="tw"><table><thead><tr><th>#</th><th>Agent</th><th>Dealers met</th><th>Individuals met</th><th>Freelancers met</th><th>Loans converted</th><th>Conversion</th></tr></thead><tbody id="lbrows"></tbody></table></div></div>
+<div class="card" id="rm"><h2>Recent meetings</h2>
+ <div class="ctrl" style="margin-bottom:10px"><button data-t="All" class="on">All</button><button data-t="Dealer">Dealers</button><button data-t="Individual">Individuals</button><button data-t="Freelancer">Freelancers</button></div>
+ <div class="tw"><table><thead><tr><th>Date</th><th>Agent</th><th>Name</th><th>Type</th><th>Area</th><th>Outcome</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+</div>
+<script>
+var agents=[
+ {n:"Priya Nair",r:"Senior loan officer · Bengaluru South",s:1.15,q:1.12},
+ {n:"Rahul Mehta",r:"Loan officer · Bengaluru East",s:1.0,q:1.0},
+ {n:"Ananya Rao",r:"Loan officer · Whitefield",s:.9,q:1.06},
+ {n:"Karthik Iyer",r:"Junior loan officer · Koramangala",s:.72,q:.85}
+];
+var months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var T=[{k:"Dealer",base:26,rate:.21,col:"var(--brand)",lbl:"Dealers met"},{k:"Individual",base:48,rate:.31,col:"var(--brand2)",lbl:"Individuals met"},{k:"Freelancer",base:18,rate:.17,col:"var(--good)",lbl:"Freelancers met"}];
+var nm={Dealer:["Sri Motors","Gowda Auto","Shine Realty","Metro Cars","Lakshmi Builders","Star Two-Wheelers"],Individual:["A. Sharma","R. Gupta","S. Krishnan","M. Das","P. Verma","V. Reddy"],Freelancer:["Suresh (DSA)","Divya (Connector)","Imran (DSA)","Meena (Connector)","Joseph (DSA)","Latha (Connector)"]};
+var areas=["Jayanagar","HSR Layout","Indiranagar","Whitefield","BTM","Marathahalli","JP Nagar"];
+var outs=["Loan disbursed","Loan disbursed","Docs pending","Follow-up set","Not interested","Under review"];
+var period=1,cur="all",ft="All";
+function rnd(i){var x=Math.sin(i*9301+49297)*233280;return x-Math.floor(x)}
+function $(id){return document.getElementById(id)}
+function agTot(ai){var r={d:0,i:0,f:0,c:0};for(var i=6-period;i<6;i++){var o=stats(ai,4+i);r.d+=o.Dealer.met;r.i+=o.Individual.met;r.f+=o.Freelancer.met;T.forEach(function(t){r.c+=o[t.k].conv})}r.m=r.d+r.i+r.f;r.p=r.m?r.c/r.m:0;return r}
+var RJ=['Low credit score','Incomplete documents','Income proof mismatch','High existing EMIs','Employer not verified','Property or vehicle valuation','Customer not reachable','KYC mismatch'],RS={};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function saveR(){try{localStorage.setItem(SK+'.rej',JSON.stringify(RS))}catch(e){}}
+function mrange(){var r=[];for(var i=6-period;i<6;i++)r.push(4+i);return r}
+function msum(i,mi){var o=stats(i,mi);return o.Dealer.met+o.Individual.met+o.Freelancer.met}
+function rejData(ids){var o={};if(REAL){ids.forEach(function(i){var n=REAL.agents[i];mrange().forEach(function(mi){var k=mkey(mi);if(!k)return;(RS[k]||[]).forEach(function(x){if(x.a==n)o[x.r]=(o[x.r]||0)+x.n})})})}else{RJ.forEach(function(r){o[r]=0});ids.forEach(function(k){mrange().forEach(function(mi){RJ.forEach(function(r,j){o[r]+=Math.round((2+rnd(k*31+mi*7+j)*7)*(.6+rnd(k*5+j)*1.1)*agents[k].s)})})})}return Object.keys(o).map(function(r){return {r:r,n:o[r]}}).filter(function(x){return x.n>0}).sort(function(a,b){return b.n-a.n})}
+function tgtData(ids){var tm=0,tc=0;if(REAL){ids.forEach(function(i){var n=REAL.agents[i];mrange().forEach(function(mi){var k=mkey(mi);if(!k)return;store[k].forEach(function(x){if(x.a==n){tm+=x.tm||0;tc+=x.tc||0}})})});return tm||tc?{met:tm,conv:tc}:null}ids.forEach(function(k){mrange().forEach(function(){var m=Math.round(110*agents[k].s);tm+=m;tc+=Math.round(m*.27)})});return {met:tm,conv:tc}}
+function pb(l,v,t,u){var f=t?v/t:0,p=Math.min(100,f*100);return '<div class="prog"><div class="t"><span>'+esc(l)+'</span><b>'+(u?u(v):v)+' of '+(u?u(t):t)+' ('+Math.round(f*100)+'%)</b></div><div class="bar"><i style="width:'+p+'%;background:'+(f>=1?'var(--good)':f>=.8?'var(--brand)':'var(--bad)')+'"></i></div></div>'}
+function renderExtra(){
+ var all=agents.map(function(_,i){return i}),ids=cur==='all'?all:[cur],c=window.ctx,ach={m:0,c:0},t,al=[],tp=0,tm=0;
+ ids.forEach(function(i){var r=agTot(i);ach.m+=r.m;ach.c+=r.c});
+ all.forEach(function(i){var r=agTot(i);tp+=r.c;tm+=r.m});
+ t=tgtData(ids);$('tsub').textContent='last '+c.period;
+ $('tg').innerHTML=t?pb('People met',ach.m,t.met)+pb('Loans converted',ach.c,t.conv)+(cur==='all'?'<p class="sub" style="margin:10px 0 6px">By agent (loans converted)</p>'+all.map(function(i){var q=tgtData([i]),r=agTot(i);return q&&q.conv?pb(agents[i].n,r.c,q.conv):''}).join(''):''):'<p class="sub">No targets found. Add target_met and target_converted columns to your monthly upload.</p>';
+ var am=amtData(ids);
+ if(am){var pa=pb('Loan amount disbursed',am.a,am.t,fL);if(cur==='all')pa+=`<p class='sub' style='margin:10px 0 6px'>By agent (loan amount)</p>`+all.map(function(i){var q=amtData([i]);return q&&q.t?pb(agents[i].n,q.a,q.t,fL):''}).join('');$('tg').innerHTML=pa+`<hr style='border:0;border-top:1px solid var(--line);margin:12px 0'>`+$('tg').innerHTML}
+ var tr=tm?tp/tm:0;
+ ids.forEach(function(i){var r=agTot(i),pre=cur==='all'?agents[i].n+': ':'',q=tgtData([i]),m1=msum(i,9),m0=msum(i,8);
+  if(r.m&&r.p<tr*.85)al.push(pre+'conversion '+(r.p*100).toFixed(1)+'% is below the team '+(tr*100).toFixed(1)+'%');
+  if(q&&q.conv&&r.c/q.conv<.8)al.push(pre+'only '+Math.round(r.c/q.conv*100)+'% of the conversion target');
+  var qa=amtData([i]);if(qa&&qa.t&&qa.a/qa.t<.8)al.push(pre+'only '+Math.round(qa.a/qa.t*100)+'% of the loan amount target');if(m0>0&&m1<m0*.8)al.push(pre+'meetings down '+Math.round((1-m1/m0)*100)+'% vs last month')});
+ $('al').innerHTML=al.length?'<ul style="margin:0;padding-left:18px">'+al.map(function(x){return '<li style="margin:6px 0">'+esc(x)+'</li>'}).join('')+'</ul>':'<p class="sub">No alerts. Everyone is on track.</p>';
+ var rj=rejData(ids),rt=rj.reduce(function(s,x){return s+x.n},0);
+ $('rj').innerHTML=rj.length?rj.slice(0,7).map(function(x){return '<div class="fr" style="grid-template-columns:150px 1fr 40px"><span>'+esc(x.r)+'</span><div class="bar"><i style="width:'+x.n/rj[0].n*100+'%;background:var(--bad)"></i></div><b>'+Math.round(x.n/rt*100)+'%</b></div>'}).join('')+'<p class="sub" style="margin-top:8px">'+rt+' rejected applications in the last '+c.period+'</p>':'<p class="sub">No rejection data yet. Upload a rejection CSV: month, agent, reason, count.</p>';
+ $('dl').style.display=REAL?'none':'';
+ if(!REAL){var cn=cur==='all'?7:cur,dr=nm.Dealer.map(function(d,j){var m=Math.round((3+rnd(j*11+cn)*9)*period*(cur==='all'?3:1));return {d:d,m:m,c:rnd(j*7+cn+period)<.2?0:Math.round(m*(.1+rnd(j*3+cn)*.3))}}).sort(function(x,y){return y.c-x.c});
+  $('dlr').innerHTML=dr.map(function(x){return '<tr><td>'+x.d+(x.c==0?' <span class="tag Rejected">Cold</span>':'')+'</td><td>'+x.m+'</td><td>'+x.c+'</td><td>'+Math.round(x.c/x.m*100)+'%</td></tr>'}).join('')}
+ c.loanAmountLakh=am?{target:am.t,achieved:am.a,achievedPct:Math.round(am.a/am.t*100)}:'not uploaded';c.agentLoanAmountsLakh=all.map(function(i){var q=amtData([i]);return q?{agent:agents[i].n,target:q.t,achieved:q.a}:null}).filter(Boolean);c.targets=t?{target:t,achievedMet:ach.m,achievedConverted:ach.c}:'no targets uploaded';c.rejectionReasons=rj.slice(0,8).map(function(x){return {reason:x.r,count:x.n,sharePct:Math.round(x.n/rt*100)}});c.alerts=al}
+function ingestRej(rows,h){var im=h.indexOf('month'),ia=h.indexOf('agent'),ir=h.indexOf('reason'),inn=h.indexOf('count')>=0?h.indexOf('count'):h.indexOf('n');if(im<0||ia<0||inn<0)return 'The rejection file needs month, agent, reason and count columns.';var by={},ok=0,bad=0;rows.slice(1).forEach(function(r){var mo=(r[im]||'').trim().slice(0,7),a=(r[ia]||'').trim(),rs=(r[ir]||'').trim(),n=+r[inn];if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(mo)||!a||!rs||!(n>=0)){bad++;return}(by[mo]=by[mo]||[]).push({a:a,r:rs,n:n});ok++});var ks=Object.keys(by);if(!ks.length)return 'No valid rejection rows found.';ks.forEach(function(k){RS[k]=by[k]});saveR();applyData();return 'Loaded '+ok+' rejection rows for '+ks.sort().join(', ')+(bad?'. Skipped '+bad+' invalid row(s).':'.')}
+function dl(n,csv){claude.use('downloads').then(function(d){if(!d){$('umsg').textContent='Downloads are not available in this view. Open the published page.';return}return d.save({filename:n,data:csv})}).catch(function(e){if(!e||e.code!='declined')$('umsg').textContent='Could not save the file. Try again.'})}
+$('urtpl').onclick=function(){dl('rejection-reasons-template.csv','month,agent,reason,count\n2026-10,Priya Nair,Incomplete documents,6\n2026-10,Priya Nair,Low credit score,4\n2026-10,Rahul Mehta,Income proof mismatch,5\n2026-10,Rahul Mehta,KYC mismatch,3\n')};
+$('rexp').onclick=function(){var c=window.ctx;if(c)dl('team-report-'+c.period.replace(' ','-')+'.csv','agent,dealers_met,individuals_met,freelancers_met,loans_converted,conversion_pct\n'+c.agentsRanked.map(function(x){return [x.agent,x.dealersMet,x.individualsMet,x.freelancersMet,x.converted,x.conversionPct].join(',')}).join('\n')+'\n')};
+var SYN=agents.slice(),REAL=null,store={},SK="loanDash.v1";
+function mkey(mi){var k=REAL.months,ix=k.length-1-(9-mi);return ix>=0?k[ix]:null}
+function mlabel(m){if(!REAL)return months[(m+12)%12];var k=mkey(m);return k?months[+k.slice(5)-1]+" "+k.slice(2,4):"–"}
+function rstats(ai,mi){var key=mkey(mi),o={};T.forEach(function(t){o[t.k]={met:0,leads:0,conv:0}});if(!key)return o;var mm=REAL.map[key],names=ai==="all"?REAL.agents:[REAL.agents[ai]];names.forEach(function(n){var r=mm[n];if(r)T.forEach(function(t){var x=r[t.k];if(x){o[t.k].met+=x.met;o[t.k].leads+=x.leads;o[t.k].conv+=x.conv}})});return o}
+function buildReal(){var ks=Object.keys(store).sort();if(!ks.length){REAL=null;agents=SYN.slice();return}var names=[],map={};ks.forEach(function(k){map[k]={};store[k].forEach(function(r){if(names.indexOf(r.a)<0)names.push(r.a);var m=map[k][r.a]=map[k][r.a]||{};var x=m[r.t]=m[r.t]||{met:0,leads:0,conv:0};x.met+=r.m;x.leads+=r.l;x.conv+=r.c})});names.sort();REAL={months:ks,agents:names,map:map};agents=names.map(function(n){return {n:n,r:"From uploaded data",s:1,q:1}})}
+function buildSel(){sel.innerHTML='<option value="all">Overall team</option>';agents.forEach(function(a,i){var o=document.createElement("option");o.value=i;o.textContent=a.n;sel.appendChild(o)});sel.value="all";cur="all"}
+function applyData(){buildReal();buildSel();$("rm").style.display=REAL?"none":"";var u=$("ustat");u.textContent=REAL?"Showing uploaded data · "+REAL.months.length+" month(s), "+REAL.agents.length+" agents":"Showing sample data";
+ var c=$("uchips");c.innerHTML="";REAL&&REAL.months.forEach(function(k){var b=document.createElement("button");b.textContent=months[+k.slice(5)-1]+" "+k.slice(0,4)+" ✕";b.title="Remove this month";b.onclick=function(){delete store[k];save();applyData();$("umsg").textContent="Removed "+k+"."};c.appendChild(b)});render()}
+function save(){try{localStorage.setItem(SK,JSON.stringify(store))}catch(e){}}
+function csvRows(t){var rows=[],r=[],f="",q=false;t=t.replace(/^\uFEFF/,"");for(var i=0;i<t.length;i++){var ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=ch}else if(ch=='"')q=true;else if(ch==","){r.push(f);f=""}else if(ch=="\n"||ch=="\r"){if(ch=="\r"&&t[i+1]=="\n")i++;r.push(f);f="";if(r.some(function(x){return x.trim()}))rows.push(r);r=[]}else f+=ch}r.push(f);if(r.some(function(x){return x.trim()}))rows.push(r);return rows}
+function ingest(text){var rows=csvRows(text);if(rows.length<2)return "The file has no data rows.";var h=rows[0].map(function(x){return x.trim().toLowerCase()}),ix=function(n){return h.indexOf(n)},ci=ix("converted")>=0?ix("converted"):ix("disbursed");
+ if(h.indexOf("dealers_met")>=0)return ingestWide(rows,h);if(h.indexOf("reason")>=0)return ingestRej(rows,h);var im=ix("month"),ia=ix("agent"),it=ix("type"),iM=ix("met"),il=ix("leads"),itm=ix("target_met"),itc=ix("target_converted");
+ if(im<0||ia<0||it<0||iM<0||ci<0)return "Missing columns. The first row must include month, agent, type, met and converted (leads is optional).";
+ var by={},bad=0,ok=0;
+ rows.slice(1).forEach(function(r){var mo=(r[im]||"").trim().slice(0,7),a=(r[ia]||"").trim(),tl=(r[it]||"").trim().toLowerCase().replace(/s$/,""),ty=T.filter(function(t){return t.k.toLowerCase()==tl})[0],m=+r[iM],c=+r[ci],l=il>=0&&r[il]!==""&&r[il]!=null?+r[il]:m;
+  if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(mo)||!a||!ty||!(m>=0)||!(c>=0)||!(l>=0)||c>m){bad++;return}
+  (by[mo]=by[mo]||[]).push({a:a,t:ty.k,m:m,l:Math.min(l,m),c:c,tm:itm>=0?+r[itm]||0:0,tc:itc>=0?+r[itc]||0:0});ok++});
+ var ks=Object.keys(by);if(!ks.length)return "No valid rows found. Check the month (YYYY-MM), type (Dealer, Individual or Freelancer) and that converted is not more than met.";
+ ks.forEach(function(k){store[k]=by[k]});save();applyData();
+ return "Loaded "+ok+" rows for "+ks.sort().join(", ")+(bad?". Skipped "+bad+" invalid row(s).":".")}
+$("ufile").onchange=function(e){var f=e.target.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var msg=ingest(String(rd.result));$("umsg").textContent=msg;$("ufile").value="";if(/^Loaded/.test(msg))autoReview()};rd.onerror=function(){$("umsg").textContent="Couldn’t read that file."};rd.readAsText(f)};
+$("uclr").onclick=function(){store={};RS={};save();saveR();applyData();$("umsg").textContent="Back to sample data."};
+$("utpl").onclick=async function(){var csv="month,agent,type,met,leads,converted\n2026-10,Priya Nair,Dealer,28,20,6\n2026-10,Priya Nair,Individual,52,38,17\n2026-10,Priya Nair,Freelancer,19,13,3\n2026-10,Rahul Mehta,Dealer,25,17,5\n2026-10,Rahul Mehta,Individual,47,33,14\n2026-10,Rahul Mehta,Freelancer,17,11,3\n";try{var d=await claude.use("downloads");if(!d){$("umsg").textContent="Downloads aren’t available in this view. Open the published page to get the template.";return}await d.save({filename:"loan-agent-monthly-template.csv",data:csv.split("\n").map(function(l,i){return l?l+(i?",40,12":",target_met,target_converted"):l}).join("\n")})}catch(e){if(!e||e.code!="declined")$("umsg").textContent="Couldn’t save the template. Try again."}};
+try{store=JSON.parse(localStorage.getItem(SK)||"{}")||{}}catch(e){store={}}
+try{RS=JSON.parse(localStorage.getItem(SK+".rej")||"{}")||{}}catch(e){RS={}}
+if(Object.keys(store).length)applyData();else $("ustat").textContent="Showing sample data";
+var sample=null,busy=false;
+if(window.claude&&claude.use){claude.use("sample").then(function(s){sample=s}).catch(function(){})}
+function md(t){var e=t.replace(/&/g,"&amp;").replace(/</g,"&lt;"),o="",ul=false;e.split("\n").forEach(function(l){var m=l.match(/^\s*[-*] (.*)/);if(m){if(!ul){o+="<ul>";ul=true}o+="<li>"+m[1]+"</li>"}else{if(ul){o+="</ul>";ul=false}m=l.match(/^#+\s*(.*)/);if(m)o+="<h4>"+m[1]+"</h4>";else if(l.trim())o+="<p>"+l+"</p>"}});if(ul)o+="</ul>";return o.replace(/\*\*(.+?)\*\*/g,"<b>$1</b>")}
+var TASK={analyse:"Analyse this performance. Give a 2-sentence verdict, 3 strengths, 3 problem areas with numbers, and the single biggest opportunity.",improve:"Give 5 specific, prioritised actions to improve conversion and sourcing. For each: what to do, why (cite the numbers) and the expected impact.",plan:"Create a practical Monday to Saturday activity plan for next week: daily target counts of dealer visits, individual meetings and freelancer connects, plus follow-ups. Add a short rationale and a weekly target for loans converted."};
+async function coach(task){
+ var out=$("cout");
+ if(!sample){out.textContent="The AI coach isn’t available in this view. Open the published page and allow access when asked.";return}
+ if(busy)return;busy=true;document.querySelectorAll("#coach button").forEach(function(b){b.disabled=true});
+ var c=window.ctx,tag='<p class="sub">For '+c.view+' · last '+c.period+'</p>';
+ var prompt="You are a sales performance coach for a loan-sourcing team in India. Agents source retail loans from three channels: dealers, individuals and freelancers (DSAs/connectors). Conversion = loans disbursed divided by people met. Use ONLY the data below, quote real numbers, be concise (under 280 words), use plain language and markdown with short headings and bullet points. "+(c.isTeam?"This is the whole team: name which agents need coaching and what each should do. ":"This is one agent: compare them with the team conversion by type. ")+"Data (sample data): "+JSON.stringify(c)+"\n\nTask: "+task;
+ out.innerHTML=tag+"<p>Thinking…</p>";
+ try{await sample(prompt,{cache:false,onText:function(r){out.innerHTML=tag+md(r.text)}})}
+ catch(e){out.innerHTML=tag+"<p>"+(e&&e.code=="rate_limited"?"Too many requests. Wait a moment and try again.":e&&e.code=="not_granted"?"Access to the AI coach was declined for this page.":"The coach couldn’t answer. Try again.")+"</p>"}
+ busy=false;document.querySelectorAll("#coach button").forEach(function(b){b.disabled=false})}
+document.querySelectorAll("[data-a]").forEach(function(b){b.onclick=function(){coach(TASK[b.dataset.a])}});
+$("cask").onclick=function(){var q=$("cq").value.trim();if(q)coach("Answer this question from the manager: "+q)};
+$("cq").onkeydown=function(e){if(e.key=="Enter")$("cask").click()};
+function ingestWide(rows,h){
+ var ix=function(n){return h.indexOf(n)},im=ix('month'),ia=ix('agent'),by={},rb={},ok=0,bad=0,rc=[];
+ h.forEach(function(x,j){if(x.indexOf('rej_')==0)rc.push([j,x.slice(4).replace(/_/g,' ').replace(/^./,function(c){return c.toUpperCase()})])});
+ if(im<0||ia<0)return 'The file needs month and agent columns. Download the template to see the format.';
+ rows.slice(1).forEach(function(r){var mo=(r[im]||'').trim().slice(0,7),a=(r[ia]||'').trim();if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(mo)||!a){bad++;return}
+  var list=[],fail=false;
+  T.forEach(function(t,k){var p=t.k.toLowerCase()+'s_',m=+r[ix(p+'met')]||0,c=+r[ix(p+'converted')]||0,li=ix(p+'leads'),l=li>=0&&r[li]!==''?+r[li]||0:m;if(c>m||m<0||c<0)fail=true;list.push({a:a,t:t.k,m:m,l:Math.min(l,m),c:c,tm:k?0:+r[ix('target_met')]||0,tc:k?0:+r[ix('target_converted')]||0,ta:k?0:+r[ix('target_amount_lakh')]||0,aa:k?0:+r[ix('achieved_amount_lakh')]||0})});
+  if(fail){bad++;return}
+  (by[mo]=by[mo]||[]).push.apply(by[mo],list);
+  rc.forEach(function(q){var n=+r[q[0]]||0;if(n>0)(rb[mo]=rb[mo]||[]).push({a:a,r:q[1],n:n})});ok++});
+ var ks=Object.keys(by);if(!ks.length)return 'No valid rows found. Use month as YYYY-MM and make sure converted is not more than met.';
+ ks.forEach(function(k){store[k]=by[k];if(rb[k])RS[k]=rb[k]});save();saveR();applyData();
+ return 'Loaded '+ok+' agent rows for '+ks.sort().join(', ')+(bad?'. Skipped '+bad+' invalid row(s).':'.')}
+var WIDE='month,agent,dealers_met,dealers_leads,dealers_converted,individuals_met,individuals_leads,individuals_converted,freelancers_met,freelancers_leads,freelancers_converted,target_met,target_converted,rej_low_credit_score,rej_incomplete_documents,rej_income_proof_mismatch,rej_high_existing_emis,rej_employer_not_verified,rej_valuation_issue,rej_customer_not_reachable,rej_kyc_mismatch\n2026-10,Priya Nair,28,20,6,52,38,17,19,13,3,110,28,4,6,3,2,1,2,3,2\n2026-10,Rahul Mehta,25,17,5,47,33,14,17,11,3,100,25,5,4,5,3,2,1,2,1\n';
+$('utpl').onclick=function(){dl('loan-agent-monthly-template.csv',WIDE)};
+var MT={i:0,ai:null,gen:false,el:null,tm:null,t0:0},ACT=[];
+try{ACT=JSON.parse(localStorage.getItem(SK+'.act')||'[]')||[]}catch(e){}
+function saveA(){try{localStorage.setItem(SK+'.act',JSON.stringify(ACT))}catch(e){}}
+function mtSlides(){
+ var c=window.ctx,r=c.agentsRanked,names=agents.map(function(a){return a.n}),fx=/document|kyc|reach|proof|verif|gap/i,rj=c.rejectionReasons||[],s=[];
+ var fixable=rj.filter(function(x){return fx.test(x.reason)}).reduce(function(a,x){return a+x.sharePct},0),best=r[0]||{agent:'-',conversionPct:0};
+ s.push(`<p class='mk'>Team review · last ${c.period}</p><div class='mbig'>${c.overallConversionPct}%</div><p class='ms'>of the people we met became loans</p><div class='mchips'><div><b>${c.totalMet}</b>people met</div><div><b>${c.totalConverted}</b>loans converted</div><div><b>${r.length}</b>agents</div><div><b>${esc(best.agent)}</b>highest conversion</div></div>`);
+ s.push(`<h2 class='mh'>Leaderboard</h2>`+r.map(function(x,i){return `<div class='mrow'><span class='mr'>${i+1}</span><b>${esc(x.agent)}</b><div class='bar'><i style='width:${x.conversionPct/(r[0].conversionPct||1)*100}%;background:${i==0?'var(--brand2)':'var(--brand)'}'></i></div><span class='mv'>${x.conversionPct}%</span><span class='mn'>${x.converted} loans</span></div>`}).join(''));
+ var th=r.map(function(x){var q=tgtData([names.indexOf(x.agent)]);return q&&q.conv?pb(x.agent,x.converted,q.conv):''}).join('');
+ var ai=names.map(function(_,i){return i}),am=amtData(ai);
+ s.push(`<h2 class='mh'>Loan amount target</h2>`+(am&&am.t?`<div class='mbig2'>${fL(am.a)} <span style='font-size:.5em;color:var(--mute)'>of ${fL(am.t)}</span></div>`+pb('Team',am.a,am.t,fL)+r.map(function(x){var q=amtData([names.indexOf(x.agent)]);return q&&q.t?pb(x.agent,q.a,q.t,fL):''}).join(''):`<p class='ms'>No loan amount targets yet. Add target_amount_lakh and achieved_amount_lakh to the monthly file.</p>`));
+ s.push(`<h2 class='mh'>Targets vs achieved</h2>`+(th||`<p class='ms'>No targets uploaded yet. Add target_met and target_converted to the monthly file.</p>`));
+ s.push(`<h2 class='mh'>Conversion by channel</h2><div class='mcards'>`+c.selected.map(function(x){return `<div class='mcard'><div class='mbig2'>${x.conversionPct}%</div><b>${x.type}s</b><p class='ms' style='font-size:1rem'>${x.met} met · ${x.leads} leads · ${x.converted} loans</p></div>`}).join('')+`</div>`);
+ s.push(`<h2 class='mh'>Why applications get rejected</h2><div class='mgrid'><div class='fn'>`+(rj.slice(0,6).map(function(x){return `<div class='fr' style='grid-template-columns:190px 1fr 50px;font-size:1.1rem'><span>${esc(x.reason)}</span><div class='bar'><i style='width:${x.sharePct/(rj[0].sharePct||1)*100}%;background:var(--bad)'></i></div><b>${x.sharePct}%</b></div>`}).join('')||`<p class='ms'>No rejection data yet.</p>`)+`</div><div class='mcall'><div class='mbig2'>${fixable}%</div><p>of rejections look fixable by the agent (documents, KYC, follow-up). What can we check before login?</p></div></div>`);
+ s.push(`<h2 class='mh'>Needs attention</h2>`+(c.alerts&&c.alerts.length?`<ul style='font-size:1.3rem;line-height:1.7;padding-left:22px'>`+c.alerts.map(function(a){return `<li>${esc(a)}</li>`}).join('')+`</ul>`:`<p class='ms'>Nothing flagged. Everyone is on track.</p>`));
+ s.push(`<h2 class='mh'>Talking points</h2><div class='out' id='mai'></div>`);
+ s.push(`<h2 class='mh'>Action items</h2><div class='mact'><input type='text' id='mi' placeholder='Add an action and owner, e.g. Rahul: call 5 cold dealers' aria-label='New action'><button id='mad'>Add</button></div><div id='mal'></div>`);
+ return s}
+function mtShow(){var s=mtSlides(),n=s.length,el=MT.el;MT.i=Math.max(0,Math.min(n-1,MT.i));el.querySelector('.mst').innerHTML=s[MT.i];
+ el.querySelector('.mdots').innerHTML=s.map(function(_,i){return `<button class='md${i==MT.i?' on':''}' data-i='${i}' aria-label='Slide ${i+1}'></button>`}).join('');
+ if(MT.i==n-2)mtAI();if(MT.i==n-1)mtAct()}
+function mtAI(){var o=document.getElementById('mai');if(!o)return;if(MT.ai){o.innerHTML=md(MT.ai)}if(MT.gen||MT.ai)return;
+ if(!sample){o.textContent='The AI coach isn’t available in this view.';return}
+ MT.gen=true;o.innerHTML='<p>Thinking…</p>';
+ sample('You are facilitating a loan sales team meeting in India. Using ONLY this data, write: 3 things to celebrate (name agents, quote numbers), 5 sharp discussion questions for the team (about conversion gaps, rejection reasons, dealers and freelancers, targets) and 1 commitment to agree on. Under 230 words, markdown with bullets. Data (sample or uploaded): '+JSON.stringify(window.ctx),{cache:false,onText:function(r){MT.ai=r.text;var e=document.getElementById('mai');if(e)e.innerHTML=md(r.text)}}).catch(function(){MT.ai=null;var e=document.getElementById('mai');if(e)e.innerHTML='<p>The coach couldn’t answer. Go to another slide and come back to retry.</p>'}).then(function(){MT.gen=false})}
+function mtAct(){var l=document.getElementById('mal');if(!l)return;l.innerHTML=ACT.length?ACT.map(function(a,k){return `<label class='mac'><input type='checkbox' data-ck='${k}'${a.d?' checked':''}><span>${esc(a.t)}</span><button data-ad='${k}' aria-label='Delete action'>✕</button></label>`}).join(''):`<p class='ms'>No actions yet. Agree what happens before next month.</p>`}
+function mtAdd(){var i=document.getElementById('mi'),v=i&&i.value.trim();if(!v)return;ACT.push({t:v,d:false});saveA();i.value='';mtAct()}
+function mtClose(){clearInterval(MT.tm);MT.el.remove();MT.el=null;document.body.style.overflow='';$('mtb').focus()}
+function mtOpen(){cur='all';sel.value='all';render();MT.i=0;MT.ai=null;MT.gen=false;
+ var el=MT.el=document.createElement('div');el.className='mt';el.setAttribute('role','dialog');el.setAttribute('aria-label','Team meeting mode');
+ el.innerHTML=`<div class='mtop'><b>Team meeting</b><div class='mper'>`+[1,3,6].map(function(p){return `<button data-pp='${p}' class='${p==period?'on':''}'>${p==1?'This month':p+' months'}</button>`}).join('')+`</div><span class='mtm' id='mtm'>00:00</span><button id='mx' aria-label='Close meeting mode'>Close</button></div><div class='mst'></div><div class='mnav'><button id='mp' aria-label='Previous slide'>‹</button><div class='mdots'></div><button id='mn' aria-label='Next slide'>›</button></div>`;
+ document.body.appendChild(el);document.body.style.overflow='hidden';MT.t0=Date.now();
+ MT.tm=setInterval(function(){var s=Math.floor((Date.now()-MT.t0)/1000),e=document.getElementById('mtm');if(e)e.textContent=('0'+Math.floor(s/60)).slice(-2)+':'+('0'+s%60).slice(-2)},1000);
+ el.onclick=function(e){var b=e.target.closest('button');if(!b)return;
+  if(b.id=='mx')mtClose();else if(b.id=='mp'){MT.i--;mtShow()}else if(b.id=='mn'){MT.i++;mtShow()}
+  else if(b.dataset.i!=null){MT.i=+b.dataset.i;mtShow()}
+  else if(b.dataset.pp){period=+b.dataset.pp;document.querySelectorAll('[data-p]').forEach(function(x){x.classList.toggle('on',x.dataset.p==String(period))});render();MT.ai=null;MT.gen=false;el.querySelectorAll('[data-pp]').forEach(function(x){x.classList.toggle('on',x==b)});mtShow()}
+  else if(b.id=='mad')mtAdd();else if(b.dataset.ad!=null){ACT.splice(+b.dataset.ad,1);saveA();mtAct()}};
+ el.onchange=function(e){var t=e.target;if(t.dataset&&t.dataset.ck!=null){ACT[+t.dataset.ck].d=t.checked;saveA()}};
+ mtShow();el.querySelector('#mx').focus()}
+document.addEventListener('keydown',function(e){if(!MT.el)return;if(e.target.tagName=='INPUT'){if(e.key=='Enter')mtAdd();if(e.key!='Escape')return}
+ if(e.key=='Escape')mtClose();else if(e.key=='ArrowRight'||e.key=='PageDown'){e.preventDefault();MT.i++;mtShow()}else if(e.key=='ArrowLeft'||e.key=='PageUp'){e.preventDefault();MT.i--;mtShow()}});
+$('mtb').onclick=mtOpen;
+function fL(n){return '₹'+Math.round(n).toLocaleString('en-IN')+' L'}
+function amtData(ids){var t=0,a=0;if(REAL){ids.forEach(function(i){var n=REAL.agents[i];mrange().forEach(function(mi){var k=mkey(mi);if(!k)return;store[k].forEach(function(x){if(x.a==n){t+=x.ta||0;a+=x.aa||0}})})});return t||a?{t:t,a:a}:null}
+ ids.forEach(function(k){mrange().forEach(function(mi){var o=stats(k,mi);t+=Math.round(270*agents[k].s);a+=Math.round((o.Dealer.conv+o.Individual.conv+o.Freelancer.conv)*(8+rnd(k*3+mi)*5))})});return {t:t,a:a}}
+WIDE='month,agent,dealers_met,dealers_leads,dealers_converted,individuals_met,individuals_leads,individuals_converted,freelancers_met,freelancers_leads,freelancers_converted,target_met,target_converted,target_amount_lakh,achieved_amount_lakh,rej_low_credit_score,rej_incomplete_documents,rej_income_proof_mismatch,rej_high_existing_emis,rej_employer_not_verified,rej_valuation_issue,rej_customer_not_reachable,rej_kyc_mismatch\n2026-10,Priya Nair,28,20,6,52,38,17,19,13,3,110,28,100,80,4,6,3,2,1,2,3,2\n2026-10,Rahul Mehta,25,17,5,47,33,14,17,11,3,100,25,100,70,5,4,5,3,2,1,2,1\n';
+TASK.auto="A new month of data was just uploaded. Write a review of the team for the latest month in under 320 words: (1) a 2-sentence summary of how the month went against targets, including loan amount in lakh achieved vs target; (2) top 3 wins and top 3 concerns, naming agents and quoting numbers; (3) the top rejection reasons, each with one concrete fix; (4) 3 priority actions for next month and which agents need coaching first.";
+function autoReview(){period=1;document.querySelectorAll("[data-p]").forEach(function(b){b.classList.toggle("on",b.dataset.p=="1")});render();$("coach").scrollIntoView({behavior:"smooth"});coach(TASK.auto)}
+TASK.reject="Analyse the rejection reasons. Rank the top causes with their share. Separate causes the agent can fix (documents, KYC, customer follow-up, wrong dealer or channel) from customer-profile causes (credit score, income, existing EMIs). Then give a specific solution for each of the top 4 reasons: pre-check steps, a document checklist, screening questions to ask before login, and which channel or dealers to prioritise. End with the expected drop in rejections and one target for next month.";
+$("rjai").onclick=function(){coach(TASK.reject);$("coach").scrollIntoView({behavior:"smooth"})};
+function pick(v){cur=v;sel.value=v;render();window.scrollTo({top:0,behavior:"smooth"})}
+var sel=$("agent");sel.innerHTML='<option value="all">Overall team</option>';
+agents.forEach(function(a,i){var o=document.createElement("option");o.value=i;o.textContent=a.n;sel.appendChild(o)});
+sel.value="all";sel.onchange=function(){cur=sel.value=="all"?"all":+sel.value;render()};
+document.querySelectorAll("[data-p]").forEach(function(b){b.onclick=function(){
+ document.querySelectorAll("[data-p]").forEach(function(x){x.classList.remove("on")});b.classList.add("on");period=+b.dataset.p;render()}});
+document.querySelectorAll("[data-t]").forEach(function(b){b.onclick=function(){
+ document.querySelectorAll("[data-t]").forEach(function(x){x.classList.remove("on")});b.classList.add("on");ft=b.dataset.t;render()}});
+
+function stats(ai,mi){if(REAL)return rstats(ai,mi);if(ai==="all"){var z={};T.forEach(function(t){z[t.k]={met:0,leads:0,conv:0}});agents.forEach(function(_,k){var y=stats(k,mi);T.forEach(function(t){for(var f in z[t.k])z[t.k][f]+=y[t.k][f]})});return z}var a=agents[ai],o={};T.forEach(function(t,j){
+ var met=Math.round(t.base*a.s*(.85+rnd(ai*40+mi*3+j)*.3));
+ var conv=Math.round(met*t.rate*a.q*(.85+rnd(ai*90+mi*5+j)*.3));
+ o[t.k]={met:met,leads:Math.round(met*.7),conv:conv}});return o}
+function score(ai){var m=0,c=0;for(var i=0;i<3;i++){var o=stats(ai,i);T.forEach(function(t){m+=o[t.k].met;c+=o[t.k].conv})}return c/m}
+
+function render(){
+ var a=cur==="all"?{n:"Overall team",r:agents.length+" agents · Bengaluru region"}:agents[cur],cm=9,tot={Dealer:{met:0,leads:0,conv:0},Individual:{met:0,leads:0,conv:0},Freelancer:{met:0,leads:0,conv:0}},ser=[];
+ for(var i=0;i<6;i++){var m=cm-5+i,o=stats(cur,m);ser.push({m:mlabel(m),o:o});
+  if(i>=6-period)T.forEach(function(t){for(var f in o[t.k])tot[t.k][f]+=o[t.k][f]})}
+ var met=0,conv=0;T.forEach(function(t){met+=tot[t.k].met;conv+=tot[t.k].conv});
+ $("av").textContent=cur==="all"?"ALL":a.n.split(" ").map(function(w){return w[0]}).join("");
+ $("an").textContent=a.n;$("ar").textContent=a.r;
+ var lb=agents.map(function(g,i){var r=agTot(i);r.n=g.n;r.id=i;return r}).sort(function(x,y){return y.p-x.p});
+ if(cur==="all"){$("rl").textContent="Team conversion";$("rk").textContent=(conv/met*100).toFixed(1)+"%"}else{$("rl").textContent="Team rank (conversion)";$("rk").textContent="#"+(lb.map(function(x){return x.id}).indexOf(cur)+1)+" of "+agents.length}
+ var pc=function(c,m){return m?(c/m*100).toFixed(1)+"%":"0%"};
+ $("kpis").innerHTML=[["Total people met",met],["Dealers met",tot.Dealer.met],["Individuals met",tot.Individual.met],["Freelancers met",tot.Freelancer.met],["Loans converted",conv],["Overall conversion",pc(conv,met)]]
+  .map(function(x){return '<div class="k"><div class="l">'+x[0]+'</div><div class="v">'+x[1]+'</div></div>'}).join("");
+ $("ch").innerHTML=T.map(function(t){var x=tot[t.k];return '<div class="card"><h2><span>'+t.lbl+'</span><span class="'+t.k+'">'+pc(x.conv,x.met)+'</span></h2><div class="big">'+x.met+'</div>'+
+  '<div class="cv">converted: <b>'+x.conv+'</b> loans</div><div class="mini"><div><b>'+x.met+'</b>Met</div><div><b>'+x.leads+'</b>Leads</div><div><b>'+x.conv+'</b>Disbursed</div></div></div>'}).join("");
+
+ var W=560,H=240,pl=30,pb=26,mx=0;ser.forEach(function(x){var t=0;T.forEach(function(q){t+=x.o[q.k].met});if(t>mx)mx=t});mx*=1.12;
+ var bw=(W-pl)/ser.length,s='';
+ for(var g=0;g<=4;g++){var y=H-pb-(H-pb-10)*g/4;s+='<line x1="'+pl+'" x2="'+W+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)"/><text x="0" y="'+(y+4)+'" font-size="11" fill="var(--mute)">'+Math.round(mx*g/4)+'</text>'}
+ ser.forEach(function(x,i){var w=Math.min(bw*.6,50),bx=pl+i*bw+(bw-w)/2,yy=H-pb;
+  T.forEach(function(t){var h=(H-pb-10)*x.o[t.k].met/mx;yy-=h;s+='<rect x="'+bx+'" y="'+yy+'" width="'+w+'" height="'+h+'" fill="'+t.col+'"><title>'+x.m+' · '+t.k+': '+x.o[t.k].met+' met, '+x.o[t.k].conv+' converted</title></rect>'});
+  s+='<text x="'+(bx+w/2)+'" y="'+(H-8)+'" text-anchor="middle" font-size="11" fill="var(--mute)">'+x.m+'</text>'});
+ $("chart").innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Meetings per month by type">'+s+'</svg>';
+
+ $("funnel").innerHTML=T.concat([{k:"Overall",col:"var(--ink)",rate:0}]).map(function(t){var x=t.k=="Overall"?{met:met,conv:conv}:tot[t.k],p=x.met?x.conv/x.met*100:0;
+  return '<div class="fr"><span>'+t.k+'</span><div class="bar"><i style="width:'+Math.min(100,p*2.5)+'%;background:'+t.col+'"></i></div><b>'+p.toFixed(0)+'%</b></div>'}).join("");
+
+ var tm={};T.forEach(function(t){tm[t.k]={met:0,conv:0}});agents.forEach(function(_,k){for(var q=6-period;q<6;q++){var oo=stats(k,4+q);T.forEach(function(t){tm[t.k].met+=oo[t.k].met;tm[t.k].conv+=oo[t.k].conv})}});
+ window.ctx={view:a.n,isTeam:cur==="all",period:period+(period==1?" month":" months"),selected:T.map(function(t){var x=tot[t.k];return {type:t.k,met:x.met,leads:x.leads,converted:x.conv,conversionPct:+(x.conv/x.met*100).toFixed(1)}}),totalMet:met,totalConverted:conv,overallConversionPct:+(conv/met*100).toFixed(1),teamConversionByType:T.map(function(t){return {type:t.k,conversionPct:+(tm[t.k].conv/tm[t.k].met*100).toFixed(1)}}),agentsRanked:lb.map(function(x){return {agent:x.n,dealersMet:x.d,individualsMet:x.i,freelancersMet:x.f,converted:x.c,conversionPct:+(x.p*100).toFixed(1)}}),last6Months:ser.map(function(x){var o2={month:x.m};T.forEach(function(t){o2[t.k]={met:x.o[t.k].met,converted:x.o[t.k].conv}});return o2})};
+ $("cfor").textContent=a.n;renderExtra();
+ var tt={d:0,i:0,f:0,c:0};lb.forEach(function(x){tt.d+=x.d;tt.i+=x.i;tt.f+=x.f;tt.c+=x.c});
+ $("lbrows").innerHTML=lb.map(function(x,k){return '<tr data-id="'+x.id+'" style="cursor:pointer;'+(x.id===cur?'background:var(--soft)':'')+'"><td>'+(k+1)+'</td><td><b>'+x.n+'</b></td><td>'+x.d+'</td><td>'+x.i+'</td><td>'+x.f+'</td><td>'+x.c+'</td><td><b>'+(x.p*100).toFixed(1)+'%</b></td></tr>'}).join("")+'<tr data-id="all" style="cursor:pointer;font-weight:700;'+(cur==="all"?'background:var(--soft)':'')+'"><td></td><td>Team total</td><td>'+tt.d+'</td><td>'+tt.i+'</td><td>'+tt.f+'</td><td>'+tt.c+'</td><td>'+(tt.c/(tt.d+tt.i+tt.f)*100).toFixed(1)+'%</td></tr>';
+ $("lbrows").onclick=function(e){var r=e.target.closest("tr");if(r){var v=r.dataset.id;pick(v=="all"?"all":+v)}};
+ var h="",cn=cur==="all"?7:cur;for(var i=0;i<24&&h.split("<tr>").length<9;i++){var t=T[Math.floor(rnd(cn*13+i)*3)].k;if(ft!="All"&&t!=ft)continue;var r=rnd(cn*7+i+period);
+  h+='<tr><td>'+(28-i)+' Oct</td><td>'+agents[cur==="all"?(i+cn)%agents.length:cur].n+'</td><td>'+nm[t][Math.floor(r*6)]+'</td><td class="'+t+'"><b>'+t+'</b></td><td>'+areas[Math.floor(rnd(i+cn)*7)]+'</td><td>'+outs[Math.floor(rnd(i*3+cn)*6)]+'</td></tr>'}
+ $("rows").innerHTML=h}
+render();
+</script>
+</body>
+</html>
